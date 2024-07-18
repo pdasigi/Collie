@@ -35,7 +35,7 @@ class Level:
             elif self.level == 'paragraph':
                 tokenized = self.split_paragraphs(text)
             elif self.level == 'passage':
-                raise NotImplementedError
+                tokenized = text
             tokenized = [tok.strip().strip('.') for tok in tokenized]  # TODO: make this more general
             return tokenized
         elif isinstance(text, list):

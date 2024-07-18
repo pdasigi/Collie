@@ -1,7 +1,7 @@
 """Word generation constraints"""
 import random
 from collie.constraints import *
-from ..extractor_utils import ConstraintExtractor, raise_exception
+from collie.extractor_utils import ConstraintExtractor, raise_exception
 
 # sentence count constraint
 WORD_CONSTRAINTS = {

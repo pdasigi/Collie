@@ -7,7 +7,7 @@ import re
 import functools
 import itertools
 import nltk
-from .constraints import *
+from collie.constraints import *
 
 
 # useful for post_extract lambdas in ConstraintExtractor.

@@ -10,9 +10,9 @@ from tqdm.autonotebook import tqdm
 from rich import print
 import random
 
-from .constraints import *
-from .extractor_utils import ConstraintExtractor, TextChunker, TextLoader
-from .constraint_renderer import ConstraintRenderer
+from collie.constraints import *
+from collie.extractor_utils import ConstraintExtractor, TextChunker, TextLoader
+from collie.constraint_renderer import ConstraintRenderer
 
 
 @dataclass

@@ -2,3 +2,6 @@ openai
 aiolimiter
 rich
 fschat
+nltk
+dill
+datasets

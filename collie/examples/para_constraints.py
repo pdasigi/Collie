@@ -1,11 +1,58 @@
 """Paragraph generation constraints"""
 import random
 from collie.constraints import *
-from ..extractor_utils import ConstraintExtractor, raise_exception
+from collie.extractor_utils import ConstraintExtractor, raise_exception
 
 
 # sentence count constraint
 PARA_CONSTRAINTS = {
+    "num_sentences_in_one_para": ConstraintExtractor(
+            init_range = {
+                "target_level": [TargetLevel("sentence")],
+                "transformation": [Count()],
+                "relation": [Relation("==")]
+            },
+            target_range = list(range(3, 10))
+        ),
+    "min_sentences_in_one_para": ConstraintExtractor(
+            init_range = {
+                "target_level": [TargetLevel("sentence")],
+                "transformation": [Count()],
+                "relation": [Relation(">=")]
+            },
+            target_range = list(range(5, 10))
+        ),
+    "max_sentences_in_one_para": ConstraintExtractor(
+            init_range = {
+                "target_level": [TargetLevel("sentence")],
+                "transformation": [Count()],
+                "relation": [Relation("<=")]
+            },
+            target_range = list(range(1, 6))
+        ),
+    "min_words_in_sentence": ConstraintExtractor(
+            init_range = {
+                "input_level": [InputLevel("sentence")],
+                "target_level": [TargetLevel("word")],
+                "transformation": [ForEach(Count())],
+                "relation": [Relation(">=")],
+                "reduction": [Reduction("all")]
+            },
+            post_extract=lambda x: min(x) if min(x) > 10 else raise_exception() 
+        ),
+    "max_words_in_sentence": ConstraintExtractor(
+            init_range = {
+                "input_level": [InputLevel("sentence")],
+                "target_level": [TargetLevel("word")],
+                "transformation": [ForEach(Count())],
+                "relation": [Relation("<=")],
+                "reduction": [Reduction("all")]
+            },
+            post_extract=lambda x: max(x) if max(x) <= 20 else raise_exception() 
+        ),
+}
+
+COMPLEX_PARA_CONSTRAINTS = {
     "c08": ConstraintExtractor(
         init_range = {
             "input_level": [InputLevel("sentence")],
