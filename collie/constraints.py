@@ -1,6 +1,7 @@
 from typing import List, Any, Callable, Iterable
 from nltk import word_tokenize, sent_tokenize
 from rich import print
+import re
 import string
 
 
@@ -27,22 +28,41 @@ class Level:
             if self.level == 'character':
                 tokenized = list(text)
             elif self.level == 'word':
-                tokenized = [x for x in word_tokenize(text) if x not in string.punctuation] 
+                tokenized = [x.strip().strip('.') for x in word_tokenize(text) if x not in string.punctuation] 
             elif self.level == 'phrase':
                 raise NotImplementedError
             elif self.level == 'sentence':
-                tokenized = sent_tokenize(text)
+                #tokenized = sent_tokenize(text)
+                tokenized = self.customized_sent_tok(text)
             elif self.level == 'paragraph':
                 tokenized = self.split_paragraphs(text)
             elif self.level == 'passage':
-                tokenized = text
-            tokenized = [tok.strip().strip('.') for tok in tokenized]  # TODO: make this more general
+                tokenized = [text]
             return tokenized
         elif isinstance(text, list):
             return [self(unit) for unit in text]
         else:
             raise ValueError(f'Input text must be a string or a list of strings, not {type(text)}.')
         
+    @staticmethod
+    def customized_sent_tok(text):
+        nltk_sents = sent_tokenize(text)
+        output_sents = []
+        buffer_ = None
+        for sent in nltk_sents:
+            if re.match("[0-9]+.", sent) and not buffer_:
+                buffer_ = sent
+            else:
+                if buffer_ is not None:
+                    sent = " ".join([buffer_, sent])
+                    buffer_ = None
+                output_sents.append(sent)
+
+        if buffer_ is not None:
+            output_sents.append(buffer_)
+
+        return output_sents
+
     @staticmethod
     def join_paragraphs(text:Iterable[str]) -> str:
         return Level._para_delim.join(text)
@@ -195,15 +215,16 @@ class Max(Transformation):
 
 
 class ForEach(Transformation):
-    def __init__(self, func):
+    def __init__(self, func, first_only=False):
         self.func = func
+        self.first_only = first_only
     
     def __call__(self, units):
         if self.func is Ellipsis:
             func = lambda x: x
         else:
             func = self.func
-        return [func(unit) for unit in units]
+        return func(units[0]) if self.first_only else [func(unit) for unit in units]
     
     def __str__(self):
         if self.func is Ellipsis:
