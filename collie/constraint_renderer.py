@@ -298,6 +298,12 @@ class ConstraintRenderer:
                         res = f"{item}"
                     else:
                         res = res + f", {item}"
+                elif isinstance(item, list) and len(item) >= 1:
+                    if len(item) == 1:
+                        res += f"\'{item[0]}\'"
+                    else:
+                        item_with_quotes = [f"\'{x}\'" for x in item]
+                        res += ", ".join(item_with_quotes[:-1]) + f" and {item_with_quotes[-1]}"
                 else:
                     if res == "":
                         res = f"\'(empty)\'"
