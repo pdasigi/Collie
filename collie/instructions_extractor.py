@@ -3,6 +3,8 @@ import copy
 from datasets import load_dataset
 from collie.extractor_utils import TextLoader
 from tqdm import tqdm
+from collections import defaultdict
+from nltk import word_tokenize
 
 class InstructionsLoader(TextLoader):
     def __init__(self,
@@ -96,6 +98,16 @@ class InstructionsLoader(TextLoader):
     
     def __len__(self):
         return len(self.dataset)
+
+    def get_token_frequencies(self):
+        # Returns a dict with token -> number of documents containing that token
+        word_frequencies = defaultdict(int)
+        for d in self.dataset:
+            response = d["messages"][1]["content"]
+            tokens = word_tokenize(response)
+            for token in set(tokens):
+                word_frequencies[token.lower()] += 1
+        return dict(word_frequencies)
 
 
 if __name__ == "__main__":
